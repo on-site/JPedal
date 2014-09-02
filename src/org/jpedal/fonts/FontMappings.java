@@ -110,7 +110,7 @@ public class FontMappings {
 
     private FontMappings(){}
 
-    public static void initFonts(){
+    public static synchronized void initFonts(){
 
         // pick up D options and use settings
 

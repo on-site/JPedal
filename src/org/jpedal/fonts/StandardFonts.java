@@ -279,7 +279,7 @@ public class StandardFonts {
     /**flag if standard_encoding loaded*/
     public static boolean usesGlyphlist=false;
 
-    public static void dispose(){
+    public static synchronized void dispose(){
 	   
 	   unicode_name_mapping_table =null;
 		
@@ -350,7 +350,7 @@ public class StandardFonts {
      * @param name
      * @return int - defined in StandardFonts (no value is FONT_UNSUPPORTED)
      */
-    public static int getFontType(String name) {
+    public static synchronized int getFontType(String name) {
 
         int type= FONT_UNSUPPORTED;
 
@@ -371,21 +371,21 @@ public class StandardFonts {
     /**
      * get FontBonds set in afm file 
      */
-    public static float[] getFontBounds(String fontName){
+    public static synchronized float[] getFontBounds(String fontName){
        return (float[]) fontBounds.get(fontName);
     }
     
 
-    public static String getUnicodeName(String key){
+    public static synchronized String getUnicodeName(String key){
 		return (String) unicode_name_mapping_table.get(key);
 	}
 	
-	public static String getUnicodeChar(int i,int key){
+	public static synchronized String getUnicodeChar(int i,int key){
 
         return unicode_char_decoding_table[i][key];
 	}
 
-    public static Map getUniqueMappings(){
+    public static synchronized Map getUniqueMappings(){
 
     	if(uniqueValues==null){
     		
@@ -407,7 +407,7 @@ public class StandardFonts {
         return uniqueValues;
     }
 	
-	public static Float getStandardWidth(String font,String key){
+	public static synchronized Float getStandardWidth(String font,String key){
 	    
 	    Object value=widthTableStandard.get(font+key);
 	    if(value==null){
@@ -713,7 +713,7 @@ public class StandardFonts {
 	    return s;
 	}*/
 	
-	static public String  getEncodedChar(int font_encoding,int char_int){
+	static synchronized public String  getEncodedChar(int font_encoding,int char_int){
 		
 		String return_character=null; 
 		
@@ -739,7 +739,7 @@ public class StandardFonts {
 	}
 	
 	/**flag fi a valid mac char - must have loaded mac encoding*/
-	public static boolean isValidMacEncoding(int idx){
+	public static synchronized boolean isValidMacEncoding(int idx){
 		
 		//if(MAC_char_encoding_table[idx]!=null)
 		//	System.out.println("mac="+MAC_char_encoding_table[idx]);
@@ -748,7 +748,7 @@ public class StandardFonts {
 	}
 	
 	/**flag fi a valid win char - must have loaded win encoding*/
-	public static boolean isValidWinEncoding(int idx){
+	public static synchronized boolean isValidWinEncoding(int idx){
 
 		//if(WIN_char_encoding_table[idx]!=null)
 		//	System.out.println("win="+WIN_char_encoding_table[idx]);
@@ -757,7 +757,7 @@ public class StandardFonts {
 	}
 	
 	/**load required mappings*/
-	public  static void checkLoaded( int enc) {
+	public  static synchronized void checkLoaded( int enc) {
 		
 		
 		/**load mapping if we need it and initialise storage*/
@@ -894,7 +894,7 @@ public class StandardFonts {
 	/**
 	 * check if one of 14 standard fonts and if so load widths 
 	 */
-	protected static void loadStandardFontWidth(String fontName){
+	protected static synchronized void loadStandardFontWidth(String fontName){
 		
 		//get name of font if standard
 		Integer fileNumber=(Integer) standardFileList.get(fontName);
@@ -915,7 +915,7 @@ public class StandardFonts {
 	/**
 	 * converts glyph into character index
 	 */
-	public static int lookupCharacterIndex(String glyph,int idx) {
+	public static synchronized int lookupCharacterIndex(String glyph,int idx) {
 		
 		Object value=glyphToChar[idx].get(glyph);
 		if(value==null)
@@ -988,7 +988,7 @@ public class StandardFonts {
 	/**
 	 * @return Returns the adobe mapping for truetype case 3,1
 	 */
-	public static int getAdobeMap(String key){
+	public static synchronized int getAdobeMap(String key){
 
         Object value=adobeMap.get(key);
         if(value==null)
@@ -1001,7 +1001,7 @@ public class StandardFonts {
     /**
      * @return Returns a boolean if in Adobe map
      */
-    public static boolean isValidGlyphName(String key){
+    public static synchronized boolean isValidGlyphName(String key){
 
         if(key==null)
             return false;
@@ -1014,7 +1014,7 @@ public class StandardFonts {
     /**
      * see if a standard font (ie Arial, Helvetica)
      */
-    public static boolean isStandardFont(String fontName, boolean includeWeights) {
+    public static synchronized boolean isStandardFont(String fontName, boolean includeWeights) {
 
         boolean isStandard=(standardFileList.get(fontName)!=null);
 
@@ -1034,7 +1034,7 @@ public class StandardFonts {
     /**
      * open font , read postscript, and return Map with font details
      */
-    public static Map getFontDetails(int type, String subFont) {
+    public static synchronized Map getFontDetails(int type, String subFont) {
 
     	Map fontDetails=new HashMap();
     	
@@ -1052,7 +1052,7 @@ public class StandardFonts {
     /**
      * open font , read postscript, family or full names and return array
      */
-    public static String[] readNamesFromFont(int type, String subFont,int mode) throws Exception {
+    public static synchronized String[] readNamesFromFont(int type, String subFont,int mode) throws Exception {
 
         String[] fontNames=new String[1];
         fontNames[0]="";
@@ -1075,7 +1075,7 @@ public class StandardFonts {
     }
 
     //allow for number value as well as glyph name (ie 68 rather than D)
-    public static String convertNumberToGlyph(String mappedChar, boolean containsHexNumbers, boolean allowSingleValue) {
+    public static synchronized String convertNumberToGlyph(String mappedChar, boolean containsHexNumbers, boolean allowSingleValue) {
 
     	int charCount=mappedChar.length();
 
@@ -1103,7 +1103,7 @@ public class StandardFonts {
     /**
      * turn hashed key value into String
      */
-    public static String getFontypeAsString(int fontType) {
+    public static synchronized String getFontypeAsString(int fontType) {
         switch(fontType){
 
             case TRUETYPE:
@@ -1148,7 +1148,7 @@ public class StandardFonts {
      * @param cid The cid value to map from
      * @return The value mapped onto
      */
-    public static int mapCIDToValidUnicode(String fontName, int cid) {
+    public static synchronized int mapCIDToValidUnicode(String fontName, int cid) {
 
         HashMap<Integer,Integer> cidMap = mappedCharacters.get(fontName);
         ArrayList<Integer> taken = takenChars.get(fontName);
@@ -1188,7 +1188,7 @@ public class StandardFonts {
     }
 
 
-    public static int getIDForGlyphName(String fontName, String glyphName) {
+    public static synchronized int getIDForGlyphName(String fontName, String glyphName) {
         boolean base10=false;
         int uc = StandardFonts.getAdobeMap(glyphName);
         if (uc >= 0) {
@@ -1217,7 +1217,7 @@ public class StandardFonts {
     /**
      * convert common abbreviations of standard fonts names
      */
-    public static String expandName(String name) {
+    public static synchronized String expandName(String name) {
         if(name.equals("Helv"))
             name="Helvetica";
         else if(name.equals("HeBo"))
@@ -1230,7 +1230,7 @@ public class StandardFonts {
 
     public static String[] CMAP=null;
 
-    public static void readCMAP() {
+    public static synchronized void readCMAP() {
 
         //initialise first time and use as flag to show read
         CMAP=new String[65536];
@@ -1278,7 +1278,7 @@ public class StandardFonts {
     /**
      * see if an Adobe CMAP which we store in CID jar
      */
-    static boolean isAdobeCMAP(String encodingName) {
+    static synchronized boolean isAdobeCMAP(String encodingName) {
         
         //lazy intialisation
         if(adobeCMAPS==null){
